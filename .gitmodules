@@ -1,0 +1,3 @@
+[submodule "readability"]
+	path = readability
+	url = git://github.com/arrix/node-readability.git

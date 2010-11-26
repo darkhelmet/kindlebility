@@ -1,0 +1,23 @@
+h1. OMG IT WORKS!
+
+1. You need a Kindle
+1. You need node.js v0.3.x and wkhtmltopdf (go grab the latest version)
+1. You need a "Postmark":http://postmarkapp.com/ API key setup with an email that your Kindle will accept. Something like johndoe@kindle.com
+1. You need to generate a key. "GRC":https://www.grc.com/passwords.htm does wonders
+1. You need some npm modules (just start running things and install as appropriate)
+1. You need to make @config.json@ with all this stuff.
+
+bq.. {
+  "key": "yourkey",
+  "postmark": "postmark key",
+  "email": {
+    "from": "your email",
+    "to": "your kindle email"
+  }
+}
+
+p. Now make a bookmarklet for yourself with:
+
+bq.. javascript:(function() {  var img = new Image();  img.src = "http://where.you.host.it.com/?u=" + encodeURIComponent(document.location.href) + "&key=yourkey&t=" + (new Date()).getTime();})();
+
+p. Hit it on some pages! You'll get a PDF on your Kindle. Well, you should!

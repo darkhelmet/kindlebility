@@ -14,9 +14,7 @@ Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'));
 Postmark = require('./postmark')(Config.postmark, {
   ssl: true
 });
-Chain = require('./chain-gang').create({
-  workers: 1
-});
+Chain = require('./chain-gang').create();
 fourOhFour = function(res) {
   res.writeHead(404, {
     'Content-Length': 0

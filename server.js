@@ -11,7 +11,7 @@ Readability = require('./readability/lib/readability');
 Spawn = require('child_process').spawn;
 Request = require('request');
 Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'));
-Postmark = 'https://api.postmarkapp.com/email';
+Postmark = 'http://api.postmarkapp.com/email';
 Chain = require('./chain-gang').create();
 fourOhFour = function(res) {
   res.writeHead(404, {

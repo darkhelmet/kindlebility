@@ -38,6 +38,7 @@ job = function(url) {
             return Fs.writeFile("" + (filename) + ".html", result.content, function(err) {
               var wkhtmltopdf;
               if (typeof err !== "undefined" && err !== null) {
+                Sys.puts('failed writing HTML file');
                 return worker.finish();
               } else {
                 wkhtmltopdf = Spawn('wkhtmltopdf', ['--page-size', 'letter', '--encoding', 'utf-8', ("" + (filename) + ".html"), ("" + (filename) + ".pdf")]);
@@ -48,6 +49,7 @@ job = function(url) {
                         Sys.puts("error reading file");
                         return worker.finish();
                       } else {
+                        Sys.puts('sending to postmark');
                         return Postmark.send({
                           From: Config.email.from,
                           To: Config.email.to,
@@ -89,6 +91,7 @@ job = function(url) {
             });
           });
         } catch (e) {
+          Sys.puts("caught an error: " + (e));
           return worker.finish();
         }
       }

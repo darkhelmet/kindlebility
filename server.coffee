@@ -30,6 +30,7 @@ job = (url) ->
             filename = Hash.sha1(url)
             Fs.writeFile "#{filename}.html", result.content, (err) ->
               if err?
+                Sys.puts('failed writing HTML file')
                 worker.finish()
               else
                 wkhtmltopdf = Spawn('wkhtmltopdf', ['--page-size', 'letter', '--encoding', 'utf-8', "#{filename}.html", "#{filename}.pdf"])
@@ -40,6 +41,7 @@ job = (url) ->
                         Sys.puts("error reading file")
                         worker.finish()
                       else
+                        Sys.puts('sending to postmark')
                         Postmark.send {
                           From: Config.email.from,
                           To: Config.email.to,
@@ -67,6 +69,7 @@ job = (url) ->
                     Sys.puts("wkhtmltopdf exited with code #{code}")
                     worker.finish()
         catch e
+          Sys.puts("caught an error: #{e}")
           worker.finish()
 
 Http.createServer((req, res) ->

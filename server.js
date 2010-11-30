@@ -11,15 +11,13 @@ Readability = require('./readability/lib/readability');
 Spawn = require('child_process').spawn;
 Request = require('request');
 Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'));
-Postmark = require('./postmark')(Config.postmark, {
-  ssl: true
-});
+Postmark = 'https://api.postmarkapp.com/email';
 Chain = require('./chain-gang').create();
 fourOhFour = function(res) {
   res.writeHead(404, {
-    'Content-Length': 0
+    'Content-Type': 'text/javascript'
   });
-  return res.end();
+  return res.end("alert('You fail...');");
 };
 job = function(url) {
   return function(worker) {
@@ -48,19 +46,31 @@ job = function(url) {
                         return worker.finish();
                       } else {
                         Sys.puts('sending to postmark');
-                        return Postmark.send({
-                          From: Config.email.from,
-                          To: Config.email.to,
-                          Subject: 'convert',
-                          TextBody: 'Straight to your Kindle!',
-                          Attachments: [
-                            {
-                              Name: ("" + (result.title) + ".pdf"),
-                              Content: data,
-                              ContentType: 'application/pdf'
-                            }
-                          ]
+                        return Request({
+                          uri: Postmark,
+                          method: 'POST',
+                          body: JSON.stringify({
+                            From: Config.email.from,
+                            To: Config.email.to,
+                            Subject: 'convert',
+                            TextBody: 'Straight to your Kindle!',
+                            Attachments: [
+                              {
+                                Name: ("" + (result.title) + ".pdf"),
+                                Content: data,
+                                ContentType: 'application/pdf'
+                              }
+                            ]
+                          }),
+                          headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Postmark-Server-Token': Config.postmark
+                          }
                         }, function(error, response, body) {
+                          if (typeof error !== "undefined" && error !== null) {
+                            Sys.puts('there was an error...');
+                          }
                           switch (response.statusCode) {
                             case 401:
                               Sys.puts('Incorrect API key');
@@ -104,9 +114,9 @@ Http.createServer(function(req, res) {
     if ((typeof (_ref = query.u) !== "undefined" && _ref !== null) && query.key === Config.key) {
       url = query.u;
       res.writeHead(200, {
-        'Content-Length': 0
+        'Content-Type': 'text/javascript'
       });
-      res.end();
+      res.end("alert('All good boss!);");
       return Chain.add(job(url));
     } else {
       return fourOhFour(res);

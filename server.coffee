@@ -10,14 +10,14 @@ Readability = require('./readability/lib/readability')
 Spawn = require('child_process').spawn
 Request = require('request')
 Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'))
-Postmark = require('./postmark')(Config.postmark, { ssl: true })
+Postmark = 'https://api.postmarkapp.com/email'
 Chain = require('./chain-gang').create()
 
 fourOhFour = (res) ->
   res.writeHead(404, {
-    'Content-Length': 0
+    'Content-Type': 'text/javascript'
   })
-  res.end()
+  res.end("alert('You fail...');")
 
 job = (url) ->
   (worker) ->
@@ -42,17 +42,27 @@ job = (url) ->
                         worker.finish()
                       else
                         Sys.puts('sending to postmark')
-                        Postmark.send {
-                          From: Config.email.from,
-                          To: Config.email.to,
-                          Subject: 'convert',
-                          TextBody: 'Straight to your Kindle!',
-                          Attachments: [{
-                            Name: "#{result.title}.pdf",
-                            Content: data,
-                            ContentType: 'application/pdf'
-                          }]
+                        Request {
+                          uri: Postmark,
+                          method: 'POST',
+                          body: JSON.stringify({
+                            From: Config.email.from,
+                            To: Config.email.to,
+                            Subject: 'convert',
+                            TextBody: 'Straight to your Kindle!',
+                            Attachments: [{
+                              Name: "#{result.title}.pdf",
+                              Content: data,
+                              ContentType: 'application/pdf'
+                            }]
+                          }),
+                          headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Postmark-Server-Token': Config.postmark
+                          }
                         }, (error, response, body) ->
+                          Sys.puts('there was an error...') if error?
                           switch response.statusCode
                             when 401
                               Sys.puts('Incorrect API key')
@@ -79,9 +89,9 @@ Http.createServer((req, res) ->
     if query.u? && query.key == Config.key
       url = query.u
       res.writeHead(200, {
-        'Content-Length': 0
+        'Content-Type': 'text/javascript'
       })
-      res.end()
+      res.end("alert('All good boss!);")
       Chain.add job(url)
     else
       fourOhFour(res)

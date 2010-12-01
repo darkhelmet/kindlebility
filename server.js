@@ -116,7 +116,7 @@ Http.createServer(function(req, res) {
       res.writeHead(200, {
         'Content-Type': 'text/javascript'
       });
-      res.end("alert('All good boss!);");
+      res.end("alert('All good boss!');");
       return Chain.add(job(url));
     } else {
       return fourOhFour(res);

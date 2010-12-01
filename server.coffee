@@ -91,7 +91,7 @@ Http.createServer((req, res) ->
       res.writeHead(200, {
         'Content-Type': 'text/javascript'
       })
-      res.end("alert('All good boss!);")
+      res.end("alert('All good boss!');")
       Chain.add job(url)
     else
       fourOhFour(res)

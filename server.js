@@ -1,7 +1,8 @@
-var Chain, Config, Fs, Http, Postmark, Query, Readability, Request, Spawn, Sys, Url, fourOhFour, job;
+var ArgsParser, Chain, Config, Fs, Http, Mongrel2, Postmark, Query, Readability, Request, Spawn, Sys, Url, args, fourOhFour, identity, job, recv, send;
 require('joose');
 require('joosex-namespace-depended');
 require('hash');
+ArgsParser = require('argsparser');
 Url = require('url');
 Fs = require('fs');
 Http = require('http');
@@ -11,13 +12,14 @@ Readability = require('./readability/lib/readability');
 Spawn = require('child_process').spawn;
 Request = require('request');
 Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'));
+Mongrel2 = require('mongrel2');
 Postmark = 'http://api.postmarkapp.com/email';
 Chain = require('./chain-gang').create();
-fourOhFour = function(res) {
-  res.writeHead(404, {
+args = ArgsParser.parse();
+fourOhFour = function(reply) {
+  return reply(404, {
     'Content-Type': 'text/javascript'
-  });
-  return res.end("alert('You fail...');");
+  }, "alert('You fail...');");
 };
 job = function(url) {
   return function(worker) {
@@ -106,22 +108,24 @@ job = function(url) {
     });
   };
 };
-Http.createServer(function(req, res) {
+recv = args['--recv'] || 'tcp://127.0.0.1:9997';
+send = args['--send'] || 'tcp://127.0.0.1:9996';
+identity = args['--identity'] || 'kindlebility';
+Mongrel2.connect(recv, send, identity, function(msg, reply) {
   var _ref, query, url;
-  url = Url.parse(req.url);
+  url = Url.parse(msg.path);
   if (typeof (_ref = url.query) !== "undefined" && _ref !== null) {
     query = Query.parse(url.query);
     if ((typeof (_ref = query.u) !== "undefined" && _ref !== null) && query.key === Config.key) {
       url = query.u;
-      res.writeHead(200, {
+      Chain.add(job(url));
+      return reply(200, {
         'Content-Type': 'text/javascript'
-      });
-      res.end("alert('All good boss!');");
-      return Chain.add(job(url));
+      }, "alert('All good boss!');");
     } else {
-      return fourOhFour(res);
+      return fourOhFour(reply);
     }
   } else {
-    return fourOhFour(res);
+    return fourOhFour(reply);
   }
-}).listen(parseInt(process.ARGV[2] || '8080'));
+});

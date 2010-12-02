@@ -1,1 +1,5 @@
 config.json
+run/
+tmp/
+logs/
+config.sqlite

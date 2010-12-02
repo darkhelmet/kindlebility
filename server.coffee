@@ -1,6 +1,7 @@
 require('joose')
 require('joosex-namespace-depended')
 require('hash')
+ArgsParser = require('argsparser')
 Url = require('url')
 Fs = require('fs')
 Http = require('http')
@@ -10,14 +11,16 @@ Readability = require('./readability/lib/readability')
 Spawn = require('child_process').spawn
 Request = require('request')
 Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'))
+Mongrel2 = require('mongrel2')
 Postmark = 'http://api.postmarkapp.com/email'
 Chain = require('./chain-gang').create()
 
-fourOhFour = (res) ->
-  res.writeHead(404, {
+args = ArgsParser.parse()
+
+fourOhFour = (reply) ->
+  reply(404, {
     'Content-Type': 'text/javascript'
-  })
-  res.end("alert('You fail...');")
+  }, "alert('You fail...');")
 
 job = (url) ->
   (worker) ->
@@ -82,19 +85,22 @@ job = (url) ->
           Sys.puts("caught an error: #{e}")
           worker.finish()
 
-Http.createServer((req, res) ->
-  url = Url.parse(req.url)
+
+recv = args['--recv'] || 'tcp://127.0.0.1:9997'
+send = args['--send'] || 'tcp://127.0.0.1:9996'
+identity = args['--identity'] || 'kindlebility'
+
+Mongrel2.connect recv, send, identity, (msg, reply) ->
+  url = Url.parse(msg.path)
   if url.query?
     query = Query.parse(url.query)
     if query.u? && query.key == Config.key
       url = query.u
-      res.writeHead(200, {
-        'Content-Type': 'text/javascript'
-      })
-      res.end("alert('All good boss!');")
       Chain.add job(url)
+      reply(200, {
+        'Content-Type': 'text/javascript'
+      }, "alert('All good boss!');")
     else
-      fourOhFour(res)
+      fourOhFour(reply)
   else
-    fourOhFour(res)
-).listen(parseInt(process.ARGV[2] || '8080'));
+    fourOhFour(reply)

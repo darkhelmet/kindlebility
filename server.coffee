@@ -91,7 +91,7 @@ send = args['--send'] || 'tcp://127.0.0.1:9996'
 identity = args['--identity'] || 'kindlebility'
 
 Mongrel2.connect recv, send, identity, (msg, reply) ->
-  url = Url.parse(msg.uri)
+  url = Url.parse(msg.headers.URI)
   if url.query?
     query = Query.parse(url.query)
     if query.u?

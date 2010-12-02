@@ -113,7 +113,7 @@ send = args['--send'] || 'tcp://127.0.0.1:9996';
 identity = args['--identity'] || 'kindlebility';
 Mongrel2.connect(recv, send, identity, function(msg, reply) {
   var _ref, query, url;
-  url = Url.parse(msg.uri);
+  url = Url.parse(msg.headers.URI);
   if (typeof (_ref = url.query) !== "undefined" && _ref !== null) {
     query = Query.parse(url.query);
     if (typeof (_ref = query.u) !== "undefined" && _ref !== null) {

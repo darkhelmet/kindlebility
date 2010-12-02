@@ -116,16 +116,26 @@ Mongrel2.connect(recv, send, identity, function(msg, reply) {
   url = Url.parse(msg.path);
   if (typeof (_ref = url.query) !== "undefined" && _ref !== null) {
     query = Query.parse(url.query);
-    if ((typeof (_ref = query.u) !== "undefined" && _ref !== null) && query.key === Config.key) {
-      url = query.u;
-      Chain.add(job(url));
-      return reply(200, {
-        'Content-Type': 'text/javascript'
-      }, "alert('All good boss!');");
+    if (typeof (_ref = query.u) !== "undefined" && _ref !== null) {
+      if (query.key === Config.key) {
+        url = query.u;
+        Chain.add(job(url));
+        return reply(200, {
+          'Content-Type': 'text/javascript'
+        }, "alert('All good boss!');");
+      } else {
+        return reply(403, {
+          'Content-Type': 'text/javascript'
+        }, "alert('Not authorized');");
+      }
     } else {
-      return fourOhFour(reply);
+      return reply(400, {
+        'Content-Type': 'text/javascript'
+      }, "alert('No URL present');");
     }
   } else {
-    return fourOhFour(reply);
+    return reply(412, {
+      'Content-Type': 'text/javascript'
+    }, "alert('Missing parameters');");
   }
 });

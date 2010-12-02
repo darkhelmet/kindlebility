@@ -94,13 +94,22 @@ Mongrel2.connect recv, send, identity, (msg, reply) ->
   url = Url.parse(msg.path)
   if url.query?
     query = Query.parse(url.query)
-    if query.u? && query.key == Config.key
-      url = query.u
-      Chain.add job(url)
-      reply(200, {
-        'Content-Type': 'text/javascript'
-      }, "alert('All good boss!');")
+    if query.u?
+      if query.key == Config.key
+        url = query.u
+        Chain.add job(url)
+        reply(200, {
+          'Content-Type': 'text/javascript'
+        }, "alert('All good boss!');")
+      else
+        reply(403, {
+          'Content-Type': 'text/javascript'
+        }, "alert('Not authorized');")
     else
-      fourOhFour(reply)
+      reply(400, {
+        'Content-Type': 'text/javascript'
+      }, "alert('No URL present');")
   else
-    fourOhFour(reply)
+    reply(412, {
+      'Content-Type': 'text/javascript'
+    }, "alert('Missing parameters');")

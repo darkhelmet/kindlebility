@@ -9,12 +9,20 @@ body {
 h1 {
   font-family: 'Lobster', arial, serif;
   font-size: 300%;
-  margin-bottom: 0px;
+  margin: 0px auto;
 }
 
 #tagline {
   display: block;
   margin-bottom: 50px;
+}
+
+#info {
+  display: block;
+  text-align: left;
+  width: 50%;
+  margin: 0px auto;
+  margin-bottom: 25px;
 }
 
 #footer {

@@ -9,6 +9,12 @@ body {
 h1 {
   font-family: 'Lobster', arial, serif;
   font-size: 300%;
+  margin-bottom: 0px;
+}
+
+#tagline {
+  display: block;
+  margin-bottom: 50px;
 }
 
 .center {

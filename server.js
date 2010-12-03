@@ -1,4 +1,4 @@
-var ArgsParser, Chain, Config, Fs, Http, Mongrel2, Postmark, Query, Readability, Request, Spawn, Sys, Url, args, fourOhFour, identity, job, recv, send;
+var ArgsParser, Chain, Config, Fs, Http, Mongrel2, Postmark, PublicDirectory, Query, Readability, Request, Spawn, Sys, Url, args, fourOhFour, identity, job, publicDir, recv, send;
 require('joose');
 require('joosex-namespace-depended');
 require('hash');
@@ -21,7 +21,7 @@ fourOhFour = function(reply) {
     'Content-Type': 'text/javascript'
   }, "alert('You fail...');");
 };
-job = function(url) {
+job = function(url, to) {
   return function(worker) {
     return Request({
       uri: url
@@ -53,7 +53,7 @@ job = function(url) {
                           method: 'POST',
                           body: JSON.stringify({
                             From: Config.email.from,
-                            To: Config.email.to,
+                            To: to,
                             Subject: 'convert',
                             TextBody: 'Straight to your Kindle!',
                             Attachments: [
@@ -111,31 +111,55 @@ job = function(url) {
 recv = args['--recv'] || 'tcp://127.0.0.1:9997';
 send = args['--send'] || 'tcp://127.0.0.1:9996';
 identity = args['--identity'] || 'kindlebility';
+PublicDirectory = function(_arg) {
+  this.mapping = _arg;
+  return this;
+};
+PublicDirectory.prototype.serve = function(msg, reply) {
+  var file;
+  if (file = this.mapping[msg.path]) {
+    reply(200, {
+      'Content-Type': file.contentType
+    }, file.content);
+    return true;
+  } else {
+    return false;
+  }
+};
+publicDir = new PublicDirectory({
+  '/': {
+    contentType: 'text/html',
+    content: Fs.readFileSync('./public/index.html')
+  },
+  '/style.css': {
+    contentType: 'text/css',
+    content: Fs.readFileSync('./public/style.css')
+  },
+  '/zepto.js': {
+    contentType: 'text/javascript',
+    content: Fs.readFileSync('./public/zepto.js')
+  }
+});
 Mongrel2.connect(recv, send, identity, function(msg, reply) {
   var _ref, query, url;
-  url = Url.parse(msg.headers.URI);
-  if (typeof (_ref = url.query) !== "undefined" && _ref !== null) {
-    query = Query.parse(url.query);
-    if (typeof (_ref = query.u) !== "undefined" && _ref !== null) {
-      if (query.key === Config.key) {
-        url = query.u;
-        Chain.add(job(url));
+  if (!(publicDir.serve(msg, reply))) {
+    url = Url.parse(msg.headers.URI);
+    if (typeof (_ref = url.query) !== "undefined" && _ref !== null) {
+      query = Query.parse(url.query);
+      if ((typeof (_ref = query.u) !== "undefined" && _ref !== null) && (typeof (_ref = query.to) !== "undefined" && _ref !== null)) {
+        Chain.add(job(query.u, query.to));
         return reply(200, {
           'Content-Type': 'text/javascript'
         }, "alert('All good boss!');");
       } else {
-        return reply(403, {
+        return reply(400, {
           'Content-Type': 'text/javascript'
-        }, "alert('Not authorized');");
+        }, "alert('No URL or to address present!');");
       }
     } else {
-      return reply(400, {
+      return reply(412, {
         'Content-Type': 'text/javascript'
-      }, "alert('No URL present');");
+      }, "alert(\"You're missing query params!\");");
     }
-  } else {
-    return reply(412, {
-      'Content-Type': 'text/javascript'
-    }, "alert('Missing parameters');");
   }
 });

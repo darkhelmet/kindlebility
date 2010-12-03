@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab&subset=latin' rel='stylesheet' type='text/css'>
+    <link href='/style.css' rel='stylesheet' type='text/css'>
+    <script type='text/javascript' src='/zepto.js'></script>
+  </head>
+  <body>
+    <div class='center'>
+      <h1>kindlebility</h1>
+      <label for='email'>Your Kindle Email:</label>
+      <input type='text' id='email' placeholder='johndoe@kindle.com' />
+      <br />
+      <br />
+      <small>Drag the link (↓) to your bookmarks bar, and add</small>
+      <small><strong>kindle@darkhelmetlive.com</strong></small>
+      <small>to your Kindle Approved E-mail List</small>
+      <br />
+      <a href='#' id='bookmarklet'></a>
+      <script type='text/javascript'>
+        $('#email').bind('change', function() {
+          $('small').show();
+          $('#bookmarklet').html('Send to my Kindle!').attr('href', "javascript:(function() { \
+            var script = document.createElement('script'); \
+            script.type = 'text/javascript'; \
+            script.src = 'http://kindlebility.darkhax.com/go?u=' + encodeURIComponent(document.location.href) + '&to=' + encodeURIComponent('" + this.value + "') + '&t=' + (new Date()).getTime(); \
+            document.getElementsByTagName('head')[0].appendChild(script); \
+          })();");
+        });
+      </script>
+    </div>
+  </body>
+</html>

@@ -22,7 +22,7 @@ fourOhFour = (reply) ->
     'Content-Type': 'text/javascript'
   }, "alert('You fail...');")
 
-job = (url) ->
+job = (url, to) ->
   (worker) ->
     Request { uri: url }, (error, response, body) ->
       if error?
@@ -50,7 +50,7 @@ job = (url) ->
                           method: 'POST',
                           body: JSON.stringify({
                             From: Config.email.from,
-                            To: Config.email.to,
+                            To: to,
                             Subject: 'convert',
                             TextBody: 'Straight to your Kindle!',
                             Attachments: [{
@@ -85,31 +85,52 @@ job = (url) ->
           Sys.puts("caught an error: #{e}")
           worker.finish()
 
-
 recv = args['--recv'] || 'tcp://127.0.0.1:9997'
 send = args['--send'] || 'tcp://127.0.0.1:9996'
 identity = args['--identity'] || 'kindlebility'
 
+class PublicDirectory
+  constructor: (@mapping) ->
+
+  serve: (msg, reply) ->
+    if file = @mapping[msg.path]
+      reply(200, {
+        'Content-Type': file.contentType
+      }, file.content)
+      true
+    else
+      false
+
+publicDir = new PublicDirectory({
+  '/': {
+    contentType: 'text/html',
+    content: Fs.readFileSync('./public/index.html')
+  },
+  '/style.css': {
+    contentType: 'text/css',
+    content: Fs.readFileSync('./public/style.css')
+  },
+  '/zepto.js': {
+    contentType: 'text/javascript',
+    content: Fs.readFileSync('./public/zepto.js')
+  }
+})
+
 Mongrel2.connect recv, send, identity, (msg, reply) ->
-  url = Url.parse(msg.headers.URI)
-  if url.query?
-    query = Query.parse(url.query)
-    if query.u?
-      if query.key == Config.key
-        url = query.u
-        Chain.add job(url)
+  unless publicDir.serve(msg, reply)
+    url = Url.parse(msg.headers.URI)
+    if url.query?
+      query = Query.parse(url.query)
+      if query.u? && query.to?
+        Chain.add job(query.u, query.to)
         reply(200, {
           'Content-Type': 'text/javascript'
         }, "alert('All good boss!');")
       else
-        reply(403, {
+        reply(400, {
           'Content-Type': 'text/javascript'
-        }, "alert('Not authorized');")
+        }, "alert('No URL or to address present!');")
     else
-      reply(400, {
+      reply(412, {
         'Content-Type': 'text/javascript'
-      }, "alert('No URL present');")
-  else
-    reply(412, {
-      'Content-Type': 'text/javascript'
-    }, "alert('Missing parameters');")
+      }, "alert(\"You're missing query params!\");")

@@ -1,0 +1,21 @@
+* {
+  font-size: 130%;
+}
+
+body {
+  font-family: 'Josefin Slab', arial, serif;
+}
+
+h1 {
+  font-family: 'Lobster', arial, serif;
+  font-size: 300%;
+}
+
+.center {
+  text-align: center;
+}
+
+small {
+  font-size: 50%;
+  display: none;
+}

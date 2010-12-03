@@ -17,6 +17,10 @@ h1 {
   margin-bottom: 50px;
 }
 
+#footer {
+  display: block;
+}
+
 .center {
   text-align: center;
 }

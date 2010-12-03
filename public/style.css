@@ -33,7 +33,30 @@ h1 {
   text-align: center;
 }
 
+#extra {
+  display: none;
+}
+
+#extra small {
+  display: block;
+}
+
 small {
   font-size: 50%;
-  display: none;
+}
+
+.round {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.box_shadow {
+  box-shadow: 5px 5px 25px black;
+  -webkit-box-shadow: 5px 5px 25px black;
+  -moz-box-shadow: 5px 5px 25px black;
+}
+
+.text_shadow {
+  text-shadow: rgba(0,0,0,0.25) 0px 0px 25px;
 }

@@ -24,7 +24,12 @@ fourOhFour = (reply) ->
 
 job = (url, to) ->
   (worker) ->
-    Request { uri: url }, (error, response, body) ->
+    Request {
+      uri: url,
+      headers: {
+        'User-Agent': "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10"
+      }
+    }, (error, response, body) ->
       if error?
         worker.finish()
       else

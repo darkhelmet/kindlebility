@@ -14,20 +14,16 @@ Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'))
 Mongrel2 = require('mongrel2')
 Postmark = 'http://api.postmarkapp.com/email'
 Chain = require('./chain-gang').create()
+UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10"
 
 args = ArgsParser.parse()
-
-fourOhFour = (reply) ->
-  reply(404, {
-    'Content-Type': 'text/javascript'
-  }, "alert('You fail...');")
 
 job = (url, to) ->
   (worker) ->
     Request {
       uri: url,
       headers: {
-        'User-Agent': "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10"
+        'User-Agent': UserAgent
       }
     }, (error, response, body) ->
       if error?
@@ -38,7 +34,7 @@ job = (url, to) ->
             filename = Hash.sha1(url)
             Fs.writeFile "#{filename}.html", result.content, (err) ->
               if err?
-                Sys.puts('failed writing HTML file')
+                Sys.puts('Failed writing HTML file')
                 worker.finish()
               else
                 wkhtmltopdf = Spawn('wkhtmltopdf', ['--page-size', 'letter', '--encoding', 'utf-8', "#{filename}.html", "#{filename}.pdf"])
@@ -46,10 +42,10 @@ job = (url, to) ->
                   if 0 == code
                     Fs.readFile "#{filename}.pdf", 'base64', (err, data) ->
                       if err?
-                        Sys.puts("error reading file")
+                        Sys.puts('Error reading file')
                         worker.finish()
                       else
-                        Sys.puts('sending to postmark')
+                        Sys.puts('Sending to postmark')
                         Request {
                           uri: Postmark,
                           method: 'POST',
@@ -57,7 +53,7 @@ job = (url, to) ->
                             From: Config.email.from,
                             To: to,
                             Subject: 'convert',
-                            TextBody: 'Straight to your Kindle!',
+                            TextBody: "Straight to your Kindle: #{url}",
                             Attachments: [{
                               Name: "#{result.title}.pdf",
                               Content: data,
@@ -70,7 +66,7 @@ job = (url, to) ->
                             'X-Postmark-Server-Token': Config.postmark
                           }
                         }, (error, response, body) ->
-                          Sys.puts('there was an error...') if error?
+                          Sys.puts('There was an error...') if error?
                           switch response.statusCode
                             when 401
                               Sys.puts('Incorrect API key')
@@ -87,7 +83,7 @@ job = (url, to) ->
                     Sys.puts("wkhtmltopdf exited with code #{code}")
                     worker.finish()
         catch e
-          Sys.puts("caught an error: #{e}")
+          Sys.puts("Caught an error: #{e}")
           worker.finish()
 
 recv = args['--recv'] || 'tcp://127.0.0.1:9997'

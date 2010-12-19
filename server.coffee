@@ -71,11 +71,11 @@ job = (url, to) ->
                             when 401
                               Sys.puts('Incorrect API key')
                             when 422
-                              Sys.puts('Malformed request')
+                              Sys.puts("Malformed request: #{body}")
                             when 200
                               Sys.puts('Everything went smoothly')
                             else
-                              Sys.puts('Some other stupid problem')
+                              Sys.puts("Some other stupid problem: #{body}")
                           Fs.unlink("#{filename}.pdf")
                           Fs.unlink("#{filename}.html")
                           worker.finish()

@@ -77,13 +77,13 @@ job = function(url, to) {
                               Sys.puts('Incorrect API key');
                               break;
                             case 422:
-                              Sys.puts('Malformed request');
+                              Sys.puts("Malformed request: " + (body));
                               break;
                             case 200:
                               Sys.puts('Everything went smoothly');
                               break;
                             default:
-                              Sys.puts('Some other stupid problem');
+                              Sys.puts("Some other stupid problem: " + (body));
                           }
                           Fs.unlink("" + (filename) + ".pdf");
                           Fs.unlink("" + (filename) + ".html");

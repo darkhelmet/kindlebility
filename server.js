@@ -55,7 +55,7 @@ job = function(url, to) {
                           TextBody: ("Straight to your Kindle: " + (url)),
                           Attachments: [
                             {
-                              Name: (new Buffer("" + (result.title) + ".pdf", 'ascii')).toString(),
+                              Name: unescape(encodeURIComponent("" + (result.title) + ".pdf")),
                               Content: data,
                               ContentType: 'application/pdf'
                             }

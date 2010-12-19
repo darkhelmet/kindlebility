@@ -53,7 +53,7 @@ job = (url, to) ->
                           TextBody: "Straight to your Kindle: #{url}",
                           Attachments: [{
                             # Force tto ASCII otherwise Postmark doesn't like it
-                            Name: (new Buffer("#{result.title}.pdf", 'ascii')).toString(),
+                            Name: unescape(encodeURIComponent("#{result.title}.pdf")),
                             Content: data,
                             ContentType: 'application/pdf'
                           }]

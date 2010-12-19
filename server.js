@@ -42,27 +42,29 @@ job = function(url, to) {
                 return wkhtmltopdf.on('exit', function(code) {
                   if (0 === code) {
                     return Fs.readFile("" + (filename) + ".pdf", 'base64', function(err, data) {
+                      var requestBody;
                       if (typeof err !== "undefined" && err !== null) {
                         Sys.puts('Error reading file');
                         return worker.finish();
                       } else {
                         Sys.puts('Sending to postmark');
+                        requestBody = JSON.stringify({
+                          From: Config.email.from,
+                          To: to,
+                          Subject: 'convert',
+                          TextBody: ("Straight to your Kindle: " + (url)),
+                          Attachments: [
+                            {
+                              Name: ("" + (result.title) + ".pdf"),
+                              Content: data,
+                              ContentType: 'application/pdf'
+                            }
+                          ]
+                        });
                         return Request({
                           uri: Postmark,
                           method: 'POST',
-                          body: JSON.stringify({
-                            From: Config.email.from,
-                            To: to,
-                            Subject: 'convert',
-                            TextBody: ("Straight to your Kindle: " + (url)),
-                            Attachments: [
-                              {
-                                Name: ("" + (result.title) + ".pdf"),
-                                Content: data,
-                                ContentType: 'application/pdf'
-                              }
-                            ]
-                          }),
+                          body: requestBody,
                           headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
@@ -78,6 +80,7 @@ job = function(url, to) {
                               break;
                             case 422:
                               Sys.puts("Malformed request: " + (body));
+                              Sys.puts(requestBody);
                               break;
                             case 200:
                               Sys.puts('Everything went smoothly');

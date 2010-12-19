@@ -46,20 +46,21 @@ job = (url, to) ->
                         worker.finish()
                       else
                         Sys.puts('Sending to postmark')
+                        requestBody = JSON.stringify({
+                          From: Config.email.from,
+                          To: to,
+                          Subject: 'convert',
+                          TextBody: "Straight to your Kindle: #{url}",
+                          Attachments: [{
+                            Name: "#{result.title}.pdf",
+                            Content: data,
+                            ContentType: 'application/pdf'
+                          }]
+                        })
                         Request {
                           uri: Postmark,
                           method: 'POST',
-                          body: JSON.stringify({
-                            From: Config.email.from,
-                            To: to,
-                            Subject: 'convert',
-                            TextBody: "Straight to your Kindle: #{url}",
-                            Attachments: [{
-                              Name: "#{result.title}.pdf",
-                              Content: data,
-                              ContentType: 'application/pdf'
-                            }]
-                          }),
+                          body: requestBody,
                           headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
@@ -72,6 +73,7 @@ job = (url, to) ->
                               Sys.puts('Incorrect API key')
                             when 422
                               Sys.puts("Malformed request: #{body}")
+                              Sys.puts(requestBody)
                             when 200
                               Sys.puts('Everything went smoothly')
                             else

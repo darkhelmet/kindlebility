@@ -52,7 +52,8 @@ job = (url, to) ->
                           Subject: 'convert',
                           TextBody: "Straight to your Kindle: #{url}",
                           Attachments: [{
-                            Name: "#{result.title}.pdf",
+                            # Force tto ASCII otherwise Postmark doesn't like it
+                            Name: (new Buffer("#{result.title}.pdf", 'ascii')).toString(),
                             Content: data,
                             ContentType: 'application/pdf'
                           }]
@@ -73,7 +74,6 @@ job = (url, to) ->
                               Sys.puts('Incorrect API key')
                             when 422
                               Sys.puts("Malformed request: #{body}")
-                              Sys.puts(requestBody)
                             when 200
                               Sys.puts('Everything went smoothly')
                             else

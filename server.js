@@ -55,7 +55,7 @@ job = function(url, to) {
                           TextBody: ("Straight to your Kindle: " + (url)),
                           Attachments: [
                             {
-                              Name: ("" + (result.title) + ".pdf"),
+                              Name: (new Buffer("" + (result.title) + ".pdf", 'ascii')).toString(),
                               Content: data,
                               ContentType: 'application/pdf'
                             }
@@ -80,7 +80,6 @@ job = function(url, to) {
                               break;
                             case 422:
                               Sys.puts("Malformed request: " + (body));
-                              Sys.puts(requestBody);
                               break;
                             case 200:
                               Sys.puts('Everything went smoothly');

@@ -3,3 +3,4 @@ run/
 tmp/
 logs/
 config.sqlite
+/*.js

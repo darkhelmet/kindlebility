@@ -1,6 +1,9 @@
 $(document).ready(function() {
-  $('#email').bind('change', function() {
-    $('#extra').show();
+  $('#email').change(function() {
+    $('#extra').slideToggle();
+    $('html, body').animate({
+      scrollTop: $(document).height()
+    });
     $('#bookmarklet').html('Send to my Kindle!').attr('href', "javascript:(function() { \
       var script = document.createElement('script'); \
       script.type = 'text/javascript'; \

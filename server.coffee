@@ -1,5 +1,3 @@
-# https://github.com/tristandunn/node-hoptoad-notifier
-
 require('joose')
 require('joosex-namespace-depended')
 require('hash')

@@ -11,4 +11,8 @@ $(document).ready(function() {
       document.getElementsByTagName('head')[0].appendChild(script); \
     })();");
   });
+
+  $.get('/donate.html', function(data) {
+    $('.center').append(data);
+  });
 });

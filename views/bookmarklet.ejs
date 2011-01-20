@@ -11,7 +11,7 @@
     div.style.borderColor = 'black';
     div.style.borderStyle = 'solid';
     div.style.borderWidth = '2px';
-    div.style.zIndex = '999';
+    div.style.zIndex = '99999999';
     div.style.padding = '5px';
     div.style.paddingTop = '16px';
     div.style.textAlign = 'center';
@@ -19,10 +19,12 @@
     body.appendChild(div);
     div.innerText = 'Working...';
 
-    var socket = new io.Socket('localhost', { port: 9090 });
+    var socket = new io.Socket('kindlebility.darkhax.com', { port: 9090 });
     socket.on('message', function(data) {
       if ('done' == data) {
-        body.removeChild(div);
+        setTimeout(function() {
+          body.removeChild(div);
+        }, 1000);
         socket.disconnect();
       } else {
         div.innerHTML = data;
@@ -35,7 +37,7 @@
   var loadSocketIO = function(callback) {
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'http://localhost:9090/socket.io/socket.io.js';
+    script.src = 'http://kindlebility.darkhax.com/socket.io/socket.io.js';
     script.onload = callback;
     var head = document.getElementsByTagName('head')[0];
     head.appendChild(script);

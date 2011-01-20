@@ -1,3 +1,6 @@
 [submodule "readability"]
 	path = readability
 	url = git://github.com/darkhelmet/node-readability.git
+[submodule "promised-io"]
+	path = promised-io
+	url = git://github.com/darkhelmet/promised-io.git

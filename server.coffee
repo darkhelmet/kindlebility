@@ -3,11 +3,18 @@
 require('joose')
 require('joosex-namespace-depended')
 require('hash')
+Fs = require('fs')
+Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'))
 Http = require('http')
 Express = require('express')
 IO = require('socket.io')
 Jade = require('jade')
 Helpers = require('./helpers')
+
+Hoptoad = require('hoptoad-notifier').Hoptoad
+Hoptoad.key = Config.hoptoad
+process.on 'uncaughtException', (error) ->
+  Hoptoad.notify(error)
 
 app = Express.createServer()
 

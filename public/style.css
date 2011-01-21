@@ -14,12 +14,18 @@ h1 {
 
 #tagline {
   display: block;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 #video {
+  display: block;
   margin: 0px auto;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
+}
+
+#blog {
+  display: block;
+  margin-bottom: 30px;
 }
 
 #footer {

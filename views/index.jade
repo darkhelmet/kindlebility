@@ -9,11 +9,23 @@ html
     link(href="/style.css", rel="stylesheet", type="text/css")
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
     script(type="text/javascript", src="/app.js")
+    :javascript
+      |  var _gaq = _gaq || [];
+      |  _gaq.push(['_setAccount', 'UA-2062105-10']);
+      |  _gaq.push(['_trackPageview']);
+      |  (function() {
+      |    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      |    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      |    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      |  })();
   body
     .center
       h1.text_shadow kindlebility
       small#tagline Sending articles to your Kindle, one click at a time!
       iframe#video(src="http://player.vimeo.com/video/17458819?byline=0&amp;portrait=0", width="400", height="250", frameborder="0")
+      small#blog
+        | Want more than just a silly screencast and a textbox asking for an email?
+        a(href="http://blog.darkhax.com/2011/01/20/the-what-why-and-how-of-kindlebility") Read This!
       #form
         label.text_shadow(for="email") Your Kindle Email:
         = ' '
@@ -29,6 +41,8 @@ html
       br
       small#footer
         | Questions, comments, problems? &middot;
-        a(href="http://twitter.com/darkhelmetlive") @darkhelmetlive
+        a(href="http://twitter.com/darkhelmetlive") Twitter
         = " &middot; "
-        a(href="https://github.com/darkhelmet/kindlebility") Get the source!
+        a(href="http://blog.darkhax.com/contact") Email
+        = " &middot; "
+        a(href="https://github.com/darkhelmet/kindlebility") Source Code

@@ -19,7 +19,13 @@ RetrievePage = (args) ->
   client = args.client
   client.send('1/6 Retrieving page...')
   defer = new Promise.defer()
-  Request { uri: args.url, headers: { 'User-Agent': UserAgent } }, (error, response, body) ->
+  options = {
+    uri: args.url,
+    headers: {
+      'User-Agent': UserAgent
+    }
+  }
+  Request.get options, (error, response, body) ->
     if error?
       msg = 'Failed to retrieve page.'
       error(client, msg)
@@ -33,6 +39,7 @@ RetrievePage = (args) ->
         url: args.url,
         to: args.to
       })
+  options.request.socket.setTimeout(10000)
   defer
 
 RunReadability = (args) ->

@@ -39,7 +39,6 @@ RetrievePage = (args) ->
         url: args.url,
         to: args.to
       })
-  options.request.socket.setTimeout(10000)
   defer
 
 RunReadability = (args) ->

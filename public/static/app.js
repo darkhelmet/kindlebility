@@ -1,6 +1,10 @@
 $(document).ready(function() {
   $('#email').change(function() {
-    $('#extra').slideToggle();
+    if ('' == this.value) {
+      $('#extra').slideUp();
+    } else {
+      $('#extra').slideDown();
+    }
     $('html, body').animate({
       scrollTop: $(document).height()
     });

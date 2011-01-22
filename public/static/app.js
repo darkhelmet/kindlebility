@@ -16,7 +16,7 @@ $(document).ready(function() {
           div = document.createElement('div'); \
           div.id = id; div.style.width = '200px'; div.style.height = '30px'; \
           div.style.position = 'fixed'; div.style.top = '10px'; div.style.left = '10px'; \
-          div.style.background = 'white'; div.style.borderColor = 'black'; div.style.borderStyle = 'solid'; \
+          div.style.background = 'white'; div.style.color = 'black'; div.style.borderColor = 'black'; div.style.borderStyle = 'solid'; \
           div.style.borderWidth = '2px'; div.style.zIndex = '99999999'; div.style.padding = '5px'; \
           div.style.paddingTop = '16px'; div.style.textAlign = 'center'; \
           div.innerText = 'Working...'; \

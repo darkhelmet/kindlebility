@@ -25,7 +25,7 @@ RetrievePage = (args) ->
       'User-Agent': UserAgent
     }
   }
-  Request.get options, (error, response, body) ->
+  Request options, (error, response, body) ->
     if error?
       msg = 'Failed to retrieve page.'
       error(client, msg)

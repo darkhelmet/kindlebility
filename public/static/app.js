@@ -27,7 +27,7 @@ $(document).ready(function() {
     })();");
   });
 
-  $.get('/donate.html', function(data) {
+  $.get('/static/donate.html', function(data) {
     $('.center').append(data);
   });
 });

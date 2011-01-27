@@ -10,6 +10,7 @@ html
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
     script(type="text/javascript", src="/static/app.js")
     :javascript
+      |  HOST = '#{host}';
       |  var _gaq = _gaq || [];
       |  _gaq.push(['_setAccount', 'UA-2062105-10']);
       |  _gaq.push(['_trackPageview']);

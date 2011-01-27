@@ -8,6 +8,7 @@ Express = require('express')
 IO = require('socket.io')
 Jade = require('jade')
 Helpers = require('./helpers')
+Host = if process.env.NODE_ENV == 'production' then 'kindlebility.darkhax.com' else 'localhost:9090'
 
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
@@ -21,7 +22,12 @@ app.configure ->
   app.set('view engine', 'jade')
 
 app.get '/', (req, res) ->
-  res.render('index', { layout: false })
+  res.render('index', {
+    layout: false,
+    locals: {
+      host: Host
+    }
+  })
 
 app.get /\/go|bookmarklet\.js/, (req, res) ->
   res.contentType('text/javascript')
@@ -29,7 +35,8 @@ app.get /\/go|bookmarklet\.js/, (req, res) ->
     res.render('bookmarklet.ejs', {
       layout: false,
       locals: {
-        to: req.param('to')
+        to: req.param('to'),
+        host: Host
       }
     })
   else

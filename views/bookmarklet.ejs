@@ -29,7 +29,7 @@
   var div = getDiv();
   var kindlebility = function() {
     // var socket = new io.Socket('localhost', { port: 9090 });
-    var socket = new io.Socket('kindlebility.darkhax.com', { port: 9090 });
+    var socket = new io.Socket('<%= host.split(':')[0] %>', { port: 9090 });
     socket.on('message', function(data) {
       if ('done' == data) {
         setTimeout(function() {
@@ -47,8 +47,7 @@
   var loadSocketIO = function(callback) {
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    // script.src = 'http://localhost:9090/socket.io/socket.io.js';
-    script.src = 'http://kindlebility.darkhax.com/socket.io/socket.io.js';
+    script.src = 'http://<%= host %>/socket.io/socket.io.js';
     script.onload = callback;
     var head = document.getElementsByTagName('head')[0];
     head.appendChild(script);

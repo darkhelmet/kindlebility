@@ -26,7 +26,7 @@ $(document).ready(function() {
       setupDiv(); \
       var script = document.createElement('script'); \
       script.type = 'text/javascript'; \
-      script.src = 'http://kindlebility.darkhax.com/bookmarklet.js?to=" + encodeURIComponent(this.value) + "&t=' + (new Date()).getTime(); \
+      script.src = 'http://" + HOST + "/bookmarklet.js?to=" + encodeURIComponent(this.value) + "&t=' + (new Date()).getTime(); \
       document.getElementsByTagName('head')[0].appendChild(script); \
     })();");
   });

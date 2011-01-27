@@ -48,4 +48,5 @@ socket = IO.listen(app)
 socket.on 'connection', (client) ->
   client.on 'message', (data) ->
     json = JSON.parse(data)
-    Helpers.processSocketIO(json.url, json.to, client)
+    json['client'] = client
+    Helpers.processSocketIO(json)

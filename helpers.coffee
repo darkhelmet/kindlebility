@@ -178,16 +178,21 @@ exports.verifyParams = (req) ->
   query = Query.parse(url.query)
   query.to? ? true : false
 
-exports.processSocketIO = (url, to, client) ->
-  Promise.seq([
-    RetrievePage,
-    RunReadability,
-    WriteFile,
-    WebkitHtmlToPdf,
-    ReadFile,
-    SendEmail
-  ], {
-    url: url,
-    to: to,
-    client: client
-  })
+exports.processSocketIO = (args) ->
+  sequence = if args.result?
+    [
+      WriteFile,
+      WebkitHtmlToPdf,
+      ReadFile,
+      SendEmail
+    ]
+  else
+    [
+      RetrievePage,
+      RunReadability,
+      WriteFile,
+      WebkitHtmlToPdf,
+      ReadFile,
+      SendEmail
+    ]
+  Promise.seq(sequence, args)

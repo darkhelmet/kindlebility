@@ -28,20 +28,27 @@
 
   var div = getDiv();
   var kindlebility = function() {
-    // var socket = new io.Socket('localhost', { port: 9090 });
     var socket = new io.Socket('<%= host.split(':')[0] %>', { port: 9090 });
     socket.on('message', function(data) {
       if ('done' == data) {
         setTimeout(function() {
           body.removeChild(div);
-        }, 1000);
+        }, 2500);
         socket.disconnect();
       } else {
         div.innerHTML = data;
       }
     });
     socket.connect();
-    socket.send(JSON.stringify({ url: url, to: to }));
+    var message = { url: url, to: to };
+    var readabilityElement = document.getElementById('readInner');
+    if (null != readabilityElement) {
+      message['result'] = {
+        content: readabilityElement.outerHTML,
+        title: readabilityElement.children[0].innerText
+      };
+    }
+    socket.send(JSON.stringify(message));
   };
 
   var loadSocketIO = function(callback) {

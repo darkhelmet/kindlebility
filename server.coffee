@@ -13,7 +13,8 @@ Host = if process.env.NODE_ENV == 'production' then 'kindlebility.darkhax.com' e
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
 process.on 'uncaughtException', (error) ->
-  Hoptoad.notify(error)
+  Hoptoad.notify error, ->
+    process.exit(0)
 
 app = Express.createServer()
 

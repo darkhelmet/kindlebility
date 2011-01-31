@@ -1,35 +1,15 @@
-alert("Please update your bookmarklet at http://kindlebility.darkhax.com/");
-(function(to, url) {
+(function(url) {
   var body = document.getElementsByTagName('body')[0];
   var getDiv = function() {
     var id = 'kindlebility';
-    var div = document.getElementById(id);
-    if (null == div) {
-      div = document.createElement('div');
-      div.id = id;
-      div.style.width = '200px';
-      div.style.height = '30px';
-      div.style.position = 'fixed';
-      div.style.top = '10px';
-      div.style.left = '10px';
-      div.style.background = 'white';
-      div.style.color = 'black';
-      div.style.borderColor = 'black';
-      div.style.borderStyle = 'solid';
-      div.style.borderWidth = '2px';
-      div.style.zIndex = '99999999';
-      div.style.padding = '5px';
-      div.style.paddingTop = '16px';
-      div.style.textAlign = 'center';
-      div.innerText = 'Working...';
-      body.appendChild(div);
-    }
-    return div;
+    return document.getElementById(id);
   };
 
   var div = getDiv();
+  var host = div.getAttribute('data-host');
   var kindlebility = function() {
-    var socket = new io.Socket('<%= host.split(':')[0] %>', { port: 9090 });
+    var to = div.getAttribute('data-email');
+    var socket = new io.Socket(host.split(':')[0], { port: 9090 });
     socket.on('message', function(data) {
       if ('done' == data) {
         setTimeout(function() {
@@ -55,7 +35,7 @@ alert("Please update your bookmarklet at http://kindlebility.darkhax.com/");
   var loadSocketIO = function(callback) {
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'http://<%= host %>/socket.io/socket.io.js';
+    script.src = 'http://' + host + '/socket.io/socket.io.js';
     script.onload = callback;
     var head = document.getElementsByTagName('head')[0];
     head.appendChild(script);
@@ -66,4 +46,4 @@ alert("Please update your bookmarklet at http://kindlebility.darkhax.com/");
   };
 
   socketIOLoaded() ? kindlebility() : loadSocketIO(kindlebility);
-})('<%= to %>', document.location.href);
+})(document.location.href);

@@ -25,8 +25,8 @@ RetrievePage = (args) ->
       'User-Agent': UserAgent
     }
   }
-  Request options, (error, response, body) ->
-    if error?
+  Request options, (err, response, body) ->
+    if err?
       msg = 'Failed to retrieve page.'
       error(client, msg)
       defer.reject(msg)
@@ -149,7 +149,7 @@ SendEmail = (args) ->
       'Content-Type': 'application/json',
       'X-Postmark-Server-Token': Config.postmark
     }
-  }, (error, response, body) ->
+  }, (err, response, body) ->
     switch response.statusCode
       when 401
         msg = "Server configuration error."

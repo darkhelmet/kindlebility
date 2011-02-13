@@ -33,7 +33,13 @@ templatize = (step, msg, func) ->
     fail = (msg) ->
       error(client, msg)
       defer.reject(msg)
-    func(args, success, fail)
+    try
+      func(args, success, fail)
+    catch e
+      Hoptoad.notify(e)
+      msg = 'An error occurred.'
+      error(client, msg)
+      defer.reject(msg)
     defer
 
 RetrievePage = templatize 1, 'Retrieving page', (args, success, fail) ->

@@ -15,10 +15,28 @@ error = (client, msg) ->
   client.send(msg)
   client.send('done')
 
-RetrievePage = (args) ->
-  client = args.client
-  client.send('1/6 Retrieving page...')
-  defer = new Promise.defer()
+formatProgress = (step, msg) ->
+  "#{step}/6 #{msg}..."
+
+formatProgressDone = (step, msg) ->
+  "#{formatProgress(step, msg)}Done!"
+
+templatize = (step, msg, func) ->
+  (args) ->
+    client = args.client
+    client.send(formatProgress(step, msg))
+    defer = new Promise.defer()
+    success = (obj) ->
+      obj['client'] = client
+      client.send(formatProgressDone(step, msg))
+      defer.resolve(obj)
+    fail = (msg) ->
+      error(client, msg)
+      defer.reject(msg)
+    func(args, success, fail)
+    defer
+
+RetrievePage = templatize 1, 'Retrieving page', (args, success, fail) ->
   options = {
     uri: args.url,
     headers: {
@@ -27,107 +45,67 @@ RetrievePage = (args) ->
   }
   Request options, (err, response, body) ->
     if err?
-      msg = 'Failed to retrieve page.'
-      error(client, msg)
-      defer.reject(msg)
+      fail('Failed to retrieve page.')
     else
-      client.send('1/6 Retrieving page...Done!')
-      defer.resolve({
-        client: client,
+      success({
         response: response,
         body: body,
         url: args.url,
         to: args.to
       })
-  defer
 
-RunReadability = (args) ->
-  client = args.client
-  client.send('2/6 Running Readability...')
-  defer = new Promise.defer()
+RunReadability = templatize 2, 'Running Readability', (args, success, fail) ->
   Readability.parse args.body, args.url, (result) ->
     if result.error
-      msg = 'Failed running Readability'
-      error(client, msg)
-      defer.reject(msg)
+      fail('Failed running Readability')
     else
-      client.send('2/6 Running Readability...Done!')
-      defer.resolve({
-        client: client,
+      success({
         url: args.url,
         result: result,
         to: args.to
       })
-  defer
 
-WriteFile = (args) ->
-  client = args.client
-  client.send('3/6 Writing HTML...')
-  defer = new Promise.defer()
+WriteFile = templatize 3, 'Writing HTML', (args, success, fail) ->
   filename = Hash.sha1(args.url)
   Fs.writeFile "#{filename}.html", args.result.content, (err) ->
     if err?
-      msg = 'Error saving Readability HTML'
-      error(client, msg)
-      defer.reject(msg)
+      fail('Error saving Readability HTML')
     else
-      client.send('3/6 Writing HTML...Done!')
-      defer.resolve({
-        client: client,
+      success({
         filename: filename,
         url: args.url,
         title: args.result.title,
         to: args.to
       })
-  defer
 
-WebkitHtmlToPdf = (args) ->
-  client = args.client
-  client.send('4/6 Running wkhtmltopdf...')
-  defer = new Promise.defer()
+WebkitHtmlToPdf = templatize 4, 'Running wkhtmltopdf', (args, success, fail) ->
   filename = args.filename
   wkhtmltopdf = Spawn('wkhtmltopdf', ['--page-size', 'letter', '--encoding', 'utf-8', "#{filename}.html", "#{filename}.pdf"])
   wkhtmltopdf.on 'exit', (code) ->
     if 0 != code
-      msg = "Error running wkhtmltopdf. (#{code})"
-      error(client, msg)
-      defer.reject(msg)
+      fail("Error running wkhtmltopdf. (#{code})")
     else
-      client.send('4/6 Running wkhtmltopdf...Done!')
-      defer.resolve({
-        client: client,
+      success({
         filename: filename,
         url: args.url,
         title: args.title,
         to: args.to
       })
-  defer
 
-ReadFile = (args) ->
-  client = args.client
-  client.send('5/6 Reading PDF...')
-  defer = new Promise.defer()
+ReadFile = templatize 5, 'Reading PDF', (args, success, fail) ->
   Fs.readFile "#{args.filename}.pdf", 'base64', (err, data) ->
     if err?
-      msg = "Error reading PDF."
-      error(client, msg)
-      defer.reject(msg)
+      fail("Error reading PDF.")
     else
-      client.send('5/6 Reading PDF...Done!')
-      defer.resolve({
-        client: client,
+      success({
         to: args.to,
         url: args.url,
         title: args.title,
         data: data,
         filename: args.filename
       })
-  defer
 
-SendEmail = (args) ->
-  client = args.client
-  client.send('6/6 Sending email...')
-  defer = new Promise.defer()
+SendEmail = templatize 6, 'Sending email', (args, success, fail) ->
   requestBody = JSON.stringify({
     From: Config.email.from,
     To: args.to,
@@ -152,23 +130,15 @@ SendEmail = (args) ->
   }, (err, response, body) ->
     switch response.statusCode
       when 401
-        msg = "Server configuration error."
-        error(client, msg)
-        defer.reject(msg)
+        fail('Server configuration error.')
       when 422
-        msg = "Error sending email (malformed request)."
-        error(client, msg)
-        defer.reject(msg)
-        Sys.puts("Malformed request: #{body}")
+        fail('Error sending email (malformed request).')
       when 200
-        client.send('6/6 Sending email...Done!')
-        client.send('done')
+        success({})
+        args.client.send('done')
         Sys.puts("Everything went smoothly.")
       else
-        msg = "Error sending email (other)."
-        error(client, msg)
-        defer.reject(msg)
-        Sys.puts("Some other stupid problem: #{body}")
+        fail('Error sending email (other).')
     Fs.unlink("#{args.filename}.pdf")
     Fs.unlink("#{args.filename}.html")
 

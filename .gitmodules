@@ -4,3 +4,6 @@
 [submodule "promised-io"]
 	path = promised-io
 	url = git://github.com/darkhelmet/promised-io.git
+[submodule "request"]
+	path = request
+	url = git://github.com/mikeal/request.git

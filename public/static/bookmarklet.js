@@ -5,6 +5,34 @@
     return document.getElementById(id);
   };
 
+  // Original readability bookmarklet
+  var tryGetOriginalReadability = function() {
+    var e = document.getElementById('readInner');
+    if (null == e) {
+      return null;
+    }
+    return {
+      content: e.outerHTML,
+      title: e.children[0].innerText
+    };
+  };
+
+  // New readability
+  var tryGetNewReadability = function() {
+    var e = document.getElementById('rdb-article');
+    if (null == e) {
+      return null;
+    }
+    return {
+      content: e.outerHTML,
+      title: document.getElementById('article-entry-title').innerText
+    };
+  };
+
+  var tryGetReadabilityResult = function() {
+    return tryGetOriginalReadability() || tryGetNewReadability();
+  };
+
   var div = getDiv();
   var host = div.getAttribute('data-host');
   var kindlebility = function() {
@@ -22,12 +50,9 @@
     });
     socket.connect();
     var message = { url: url, to: to };
-    var readabilityElement = document.getElementById('readInner');
-    if (null != readabilityElement) {
-      message['result'] = {
-        content: readabilityElement.outerHTML,
-        title: readabilityElement.children[0].innerText
-      };
+    var readabilityResult = tryGetReadabilityResult();
+    if (null != readabilityResult) {
+      message['result'] = readabilityResult;
     }
     socket.send(JSON.stringify(message));
   };

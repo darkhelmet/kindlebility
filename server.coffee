@@ -2,6 +2,7 @@ require('joose')
 require('joosex-namespace-depended')
 require('hash')
 Fs = require('fs')
+Sys = require('sys')
 Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'))
 Http = require('http')
 Express = require('express')
@@ -15,8 +16,12 @@ Fs.writeFileSync('node.pid', process.pid.toString())
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
 process.on 'uncaughtException', (error) ->
-  Hoptoad.notify error, ->
-    process.exit(0)
+  if process.env.NODE_ENV == 'production'
+    Hoptoad.notify error, ->
+      # Let's exit, since we're not entirely sure what state the app might be in
+      process.exit(0)
+  else
+    Sys.puts(error)
 
 app = Express.createServer()
 

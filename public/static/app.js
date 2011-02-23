@@ -24,7 +24,7 @@ $(document).ready(function() {
         div.style.background = 'white'; div.style.color = 'black'; div.style.borderColor = 'black'; div.style.borderStyle = 'solid'; \
         div.style.borderWidth = '2px'; div.style.zIndex = '99999999'; div.style.padding = '5px'; \
         div.style.paddingTop = '16px'; div.style.textAlign = 'center'; \
-        div.innerText = 'Working...'; \
+        div.innerHTML = 'Working...'; \
         body.appendChild(div); \
       }; \
       setupDiv(); \

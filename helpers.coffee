@@ -10,6 +10,9 @@ Config = JSON.parse(Fs.readFileSync('config.json', 'utf8'))
 Postmark = 'http://api.postmarkapp.com/email'
 UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10"
 
+Hoptoad = require('hoptoad-notifier').Hoptoad
+Hoptoad.key = Config.hoptoad
+
 error = (client, msg) ->
   Sys.puts("ERROR: #{msg}")
   client.send(msg)

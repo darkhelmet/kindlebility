@@ -13,8 +13,6 @@ Host = if process.env.NODE_ENV == 'production' then 'kindlebility.darkhax.com' e
 
 Fs.writeFileSync('node.pid', process.pid.toString())
 
-Sys.puts("JUST A TEST")
-
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
 process.on 'uncaughtException', (error) ->

@@ -1,5 +1,6 @@
 deploy:
 	ssh node.darkhax.com "cd ~/kindlebility && make update"
+	./hoptoad.sh
 
 update:
 	git pull

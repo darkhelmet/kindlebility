@@ -5,3 +5,4 @@ logs/
 config.sqlite
 /*.js
 node.pid
+public/static/bookmarklet.js

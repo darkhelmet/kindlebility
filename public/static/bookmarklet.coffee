@@ -35,10 +35,13 @@
     socket = new io.Socket(host.split(':')[0], { port: 9090 })
     socket.on 'message', (data) ->
       if 'done' == data
-        setTimeout((() -> body.removeChild(div)), 2500)
+        setTimeout((-> body.removeChild(div)), 2500)
         socket.disconnect()
       else
         div.innerHTML = data
+        te = document.createTextNode(' ')
+        div.appendChild(te)
+        setTimeout((-> te.parentNode.removeChild(te)), 50)
 
     socket.connect()
     message = { url: url, to: to }

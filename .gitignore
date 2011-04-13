@@ -2,6 +2,7 @@ config.json
 run/
 tmp/
 logs/
+pids/
 config.sqlite
 /*.js
 node.pid

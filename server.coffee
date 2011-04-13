@@ -11,8 +11,6 @@ Jade = require('jade')
 Helpers = require('./helpers')
 Host = if process.env.NODE_ENV == 'production' then 'kindlebility.darkhax.com' else 'localhost:9090'
 
-Fs.writeFileSync('node.pid', process.pid.toString())
-
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
 process.on 'uncaughtException', (error) ->
@@ -26,7 +24,7 @@ process.on 'uncaughtException', (error) ->
 app = Express.createServer()
 
 app.configure ->
-  app.use(Express.staticProvider(__dirname + '/public'))
+  app.use(Express.static(__dirname + '/public'))
   app.set('view engine', 'jade')
 
 app.get '/', (req, res) ->
@@ -50,11 +48,11 @@ app.get /\/go|bookmarklet\.js/, (req, res) ->
   else
     res.send("alert('Invalid request. Missing query params. Try making your bookmarklet again.');")
 
-app.listen(9090)
-
 socket = IO.listen(app)
 socket.on 'connection', (client) ->
   client.on 'message', (data) ->
     json = JSON.parse(data)
     json['client'] = client
     Helpers.processSocketIO(json)
+
+module.exports = app

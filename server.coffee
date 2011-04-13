@@ -48,11 +48,11 @@ app.get /\/go|bookmarklet\.js/, (req, res) ->
   else
     res.send("alert('Invalid request. Missing query params. Try making your bookmarklet again.');")
 
-app.listen(9090)
-
 socket = IO.listen(app)
 socket.on 'connection', (client) ->
   client.on 'message', (data) ->
     json = JSON.parse(data)
     json['client'] = client
     Helpers.processSocketIO(json)
+
+module.exports = app

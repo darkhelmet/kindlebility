@@ -10,5 +10,5 @@ update:
 	git submodule init
 	git submodule update
 	cat public/static/bookmarklet.coffee | coffee -bcs | yui-compressor --type js -o public/static/bookmarklet.js
-	mkdir -p pids logs
-	coffee -bc *.coffee && node app.js restart
+	mkdir -p {pids,logs}
+	coffee -bc *.coffee

@@ -75,7 +75,7 @@ RunReadability = templatize 2, 'Running Readability', (args, success, fail) ->
       })
 
 WriteFile = templatize 3, 'Writing HTML', (args, success, fail) ->
-  filename = Hash.sha1(args.url)
+  filename = Hash.sha1("#{args.url}:#{args.to}:#{(new Date).getTime()}")
   Fs.writeFile "#{filename}.html", args.result.content, (err) ->
     if err?
       fail('Error saving Readability HTML')

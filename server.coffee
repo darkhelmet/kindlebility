@@ -17,7 +17,7 @@ process.on 'uncaughtException', (error) ->
   if process.env.NODE_ENV == 'production'
     Hoptoad.notify error, ->
       # Let's exit, since we're not entirely sure what state the app might be in
-      process.exit(0)
+      process.exit(1)
   else
     Sys.puts(error)
 

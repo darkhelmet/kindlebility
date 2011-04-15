@@ -11,6 +11,8 @@ Jade = require('jade')
 Helpers = require('./helpers')
 Host = if process.env.NODE_ENV == 'production' then 'kindlebility.darkhax.com' else 'localhost:9090'
 
+Fs.writeFileSync("node.#{process.pid}.pid", process.pid.toString())
+
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
 process.on 'uncaughtException', (error) ->

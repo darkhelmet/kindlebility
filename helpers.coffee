@@ -66,7 +66,7 @@ RetrievePage = templatize 1, 'Retrieving page', (args, success, fail) ->
 RunReadability = templatize 2, 'Running Readability', (args, success, fail) ->
   Readability.parse args.body, args.url, (result) ->
     if result.error
-      fail('Failed running Readability')
+      fail("Failed running Readability: #{args.url}")
     else
       success({
         url: args.url,

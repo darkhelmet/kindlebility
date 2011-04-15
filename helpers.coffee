@@ -54,7 +54,7 @@ RetrievePage = templatize 1, 'Retrieving page', (args, success, fail) ->
   }
   Request options, (err, response, body) ->
     if err?
-      fail('Failed to retrieve page.')
+      fail("Failed to retrieve page: #{args.url}")
     else
       success({
         response: response,

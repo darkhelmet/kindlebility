@@ -13,4 +13,4 @@ update:
 	mkdir -p pids
 	mkdir -p logs
 	coffee -bc *.coffee
-	for pid in `ls *.pid`; do kill `cat $pid`; rm $pid; done
+	for i in `ls *.pid`; do kill `cat $i`; rm $i; done

@@ -13,8 +13,8 @@ UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKi
 Hoptoad = require('hoptoad-notifier').Hoptoad
 Hoptoad.key = Config.hoptoad
 
-error = (client, msg) ->
-  Sys.puts("ERROR: #{msg}")
+error = (client, msg, url) ->
+  Sys.puts("** ERROR ** #{msg} (#{url})")
   client.send(msg)
   client.send('done')
 
@@ -34,14 +34,14 @@ templatize = (step, msg, func) ->
       client.send(formatProgressDone(step, msg))
       defer.resolve(obj)
     fail = (msg) ->
-      error(client, msg)
+      error(client, msg, args.url)
       defer.reject(msg)
     try
       func(args, success, fail)
     catch e
       Hoptoad.notify(e)
       msg = 'An error occurred.'
-      error(client, msg)
+      error(client, msg, args.url)
       defer.reject(msg)
     defer
 
@@ -54,7 +54,7 @@ RetrievePage = templatize 1, 'Retrieving page', (args, success, fail) ->
   }
   Request options, (err, response, body) ->
     if err?
-      fail("Failed to retrieve page: #{args.url}")
+      fail('Failed to retrieve page')
     else
       success({
         response: response,
@@ -66,7 +66,7 @@ RetrievePage = templatize 1, 'Retrieving page', (args, success, fail) ->
 RunReadability = templatize 2, 'Running Readability', (args, success, fail) ->
   Readability.parse args.body, args.url, (result) ->
     if result.error
-      fail("Failed running Readability: #{args.url}")
+      fail('Failed running Readability')
     else
       success({
         url: args.url,

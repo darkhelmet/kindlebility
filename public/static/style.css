@@ -36,12 +36,22 @@ h1 {
   text-align: center;
 }
 
-#extra {
+#extra, #ios {
   display: none;
 }
 
 #extra small {
   display: block;
+}
+
+#iosLink {
+  font-size: 50%;
+}
+
+#ios {
+  font-size: 12px;
+  height: 100px;
+  width: 400px;
 }
 
 small {

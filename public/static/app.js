@@ -8,7 +8,7 @@ $(document).ready(function() {
     $('html, body').animate({
       scrollTop: $(document).height()
     });
-    $('#bookmarklet').html('Send to my Kindle!').attr('href', "javascript:(function() { \
+    var script = "javascript:(function() { \
       var setupDiv = function() { \
         var id = 'kindlebility'; \
         var div = document.getElementById(id); \
@@ -32,7 +32,14 @@ $(document).ready(function() {
       script.type = 'text/javascript'; \
       script.src = 'http://" + HOST + "/static/bookmarklet.js?t=' + (new Date()).getTime(); \
       document.getElementsByTagName('head')[0].appendChild(script); \
-    })();");
+    })();";
+    $('#bookmarklet').html('Send to my Kindle!').attr('href', script);
+    $('#ios').html(script);
+  });
+
+  $('#iosLink').click(function(event) {
+    $('#ios').slideToggle();
+    return false;
   });
 
   $.get('/static/donate.html', function(data) {

@@ -51,9 +51,10 @@
 
   loadSocketIO = (callback) ->
     script = document.createElement('script')
+    script.async = 'async'
     script.type = 'text/javascript'
     script.src = 'http://' + host + '/socket.io/socket.io.js'
-    script.onload = callback
+    script.onload = script.onreadystatechange = callback
     head = document.getElementsByTagName('head')[0]
     head.appendChild(script);
 

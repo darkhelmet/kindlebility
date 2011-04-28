@@ -1,4 +1,8 @@
 ((url) ->
+  log = (message) ->
+    if console? && console.log?
+      console.log("** kindlebility **\t#{message}")
+
   body = document.getElementsByTagName('body')[0]
   getDiv = () ->
     document.getElementById('kindlebility')
@@ -31,25 +35,32 @@
   div = getDiv()
   host = div.getAttribute('data-host')
   kindlebility = () ->
+    log('starting process')
     to = div.getAttribute('data-email')
     socket = new io.Socket(host.split(':')[0], { port: 9090 })
     socket.on 'message', (data) ->
       if 'done' == data
+        log('done')
         setTimeout((-> body.removeChild(div)), 2500)
         socket.disconnect()
       else
+        log(data)
         div.innerHTML = data
         te = document.createTextNode(' ')
         div.appendChild(te)
         setTimeout((-> div.removeChild(te)), 50)
 
     socket.connect()
+    log('socket connected')
     message = { url: url, to: to }
     readabilityResult = tryGetReadabilityResult()
     message['result'] = readabilityResult if e?
-    socket.send(JSON.stringify(message))
+    json = JSON.stringify(message)
+    log("sending initial message: #{json}")
+    socket.send(json)
 
   loadSocketIO = (callback) ->
+    log('loading socket.io')
     script = document.createElement('script')
     script.async = 'async'
     script.type = 'text/javascript'
@@ -62,8 +73,10 @@
     window.io?.Socket && 'function' == typeof(window.io.Socket)
 
   if socketIOLoaded()
+    log('socket.io already loaded')
     kindlebility()
   else
+    log('socket.io not loaded')
     loadSocketIO(kindlebility)
 
 )(document.location.href)

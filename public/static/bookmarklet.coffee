@@ -38,6 +38,16 @@
     log('starting process')
     to = div.getAttribute('data-email')
     socket = new io.Socket(host.split(':')[0], { port: 9090 })
+    socket.connect()
+    socket.on 'connect' ->
+      log('socket connected')
+      message = { url: url, to: to }
+      readabilityResult = tryGetReadabilityResult()
+      message['result'] = readabilityResult if e?
+      json = JSON.stringify(message)
+      log("sending initial message: #{json}")
+      socket.send(json)
+
     socket.on 'message', (data) ->
       if 'done' == data
         log('done')
@@ -48,16 +58,6 @@
         div.innerHTML = data
         te = document.createTextNode(' ')
         div.appendChild(te)
-        setTimeout((-> div.removeChild(te)), 50)
-
-    socket.connect()
-    log('socket connected')
-    message = { url: url, to: to }
-    readabilityResult = tryGetReadabilityResult()
-    message['result'] = readabilityResult if e?
-    json = JSON.stringify(message)
-    log("sending initial message: #{json}")
-    socket.send(json)
 
   loadSocketIO = (callback) ->
     log('loading socket.io')

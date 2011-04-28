@@ -41,7 +41,7 @@
         div.innerHTML = data
         te = document.createTextNode(' ')
         div.appendChild(te)
-        setTimeout((-> te.parentNode.removeChild(te)), 50)
+        setTimeout((-> div.removeChild(te)), 50)
 
     socket.connect()
     message = { url: url, to: to }

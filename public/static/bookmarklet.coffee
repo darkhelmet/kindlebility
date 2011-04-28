@@ -39,7 +39,7 @@
     to = div.getAttribute('data-email')
     socket = new io.Socket(host.split(':')[0], { port: 9090 })
     socket.connect()
-    socket.on 'connect' ->
+    socket.on 'connect', ->
       log('socket connected')
       message = { url: url, to: to }
       readabilityResult = tryGetReadabilityResult()

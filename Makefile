@@ -5,6 +5,9 @@ deploy:
 	ssh node.darkhax.com "cd ~/kindlebility && make update"
 	./hoptoad.sh
 
+bookmarklet:
+	cat public/static/bookmarklet.coffee | coffee -bcs > public/static/bookmarklet.js
+
 update:
 	git pull
 	git submodule init

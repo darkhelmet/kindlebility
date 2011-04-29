@@ -36,17 +36,21 @@
   host = div.getAttribute('data-host')
   kindlebility = () ->
     log('starting process')
+    connected = false
     to = div.getAttribute('data-email')
     socket = new io.Socket(host.split(':')[0], { port: 9090 })
     socket.connect()
     socket.on 'connect', ->
-      log('socket connected')
-      message = { url: url, to: to }
-      readabilityResult = tryGetReadabilityResult()
-      message['result'] = readabilityResult if e?
-      json = JSON.stringify(message)
-      log("sending initial message: #{json}")
-      socket.send(json)
+      # Ensure this only ever happens once
+      unless connected
+        connected = true
+        log('socket connected')
+        message = { url: url, to: to }
+        readabilityResult = tryGetReadabilityResult()
+        message['result'] = readabilityResult if e?
+        json = JSON.stringify(message)
+        log("sending initial message: #{json}")
+        socket.send(json)
 
     socket.on 'message', (data) ->
       if 'done' == data
@@ -72,11 +76,17 @@
   socketIOLoaded = () ->
     window.io?.Socket && 'function' == typeof(window.io.Socket)
 
-  if socketIOLoaded()
-    log('socket.io already loaded')
-    kindlebility()
+  # Let's only run this stuff once
+  if window.kindlebility isnt true
+    window.kindlebility = true
+
+    if socketIOLoaded()
+      log('socket.io already loaded')
+      kindlebility()
+    else
+      log('socket.io not loaded')
+      loadSocketIO(kindlebility)
   else
-    log('socket.io not loaded')
-    loadSocketIO(kindlebility)
+    alert('Kindlebility has already ran! Refresh the page to try again.')
 
 )(document.location.href)

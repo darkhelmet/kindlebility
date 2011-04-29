@@ -79,13 +79,15 @@
   # Let's only run this stuff once
   if window.kindlebility isnt true
     window.kindlebility = true
-
-    if socketIOLoaded()
-      log('socket.io already loaded')
-      kindlebility()
+    if url.match(/kindlebility\.(darkhax\.)?com/) == null
+      if socketIOLoaded()
+        log('socket.io already loaded')
+        kindlebility()
+      else
+        log('socket.io not loaded')
+        loadSocketIO(kindlebility)
     else
-      log('socket.io not loaded')
-      loadSocketIO(kindlebility)
+      alert('You have to use this on a page you want to read, not the Kindlebility page!')
   else
     alert('Kindlebility has already ran! Refresh the page to try again.')
 
